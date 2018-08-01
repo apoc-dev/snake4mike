@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 
+#start lenght
 start_leng = 0
 
 #colors
@@ -9,18 +10,11 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-pygame.init()
-pygame.display.set_caption('snake vs mike')
 
 #window size
 ww = 300
 wh = 300
 
-        
-window = pygame.display.set_mode((ww, wh))
-gameclock = pygame.time.Clock()
-
-myfont = pygame.font.SysFont("monospace", 15)
 
 class app(object):
     
@@ -28,20 +22,40 @@ class app(object):
     def __init__(self):
         self.ww = ww
         self.wh = wh
-        self.window = window
+        self.on_init()
+        self.snake = snake(self.window, self.myfont)
+        self.food = food(self.window)
         self.on_exec()
+
+    def on_init(self):
+        pygame.init()
+        pygame.display.set_caption('snake vs mike')
+                
+        self.window = pygame.display.set_mode((ww, wh))
+        self.gameclock = pygame.time.Clock()
+
+        self.myfont = pygame.font.SysFont("monospace", 15)
+
+
+
+    def on_render(self):
+        self.window.fill(BLACK)
+        self.snake.score()
+        self.snake.draw()
+        self.food.spawn()
+
         
     def on_exec(self):
         stopped = False
 
         #create snake object
-        self.snake = snake()
-        self.food = food()
+        
         print("starting main loop")
 
 
         while stopped == False:
             self.window
+
             #Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -61,13 +75,9 @@ class app(object):
                 if keys_pressed[pygame.K_DOWN]:
                     self.snake.move_down()
 
-            self.window.fill(BLACK)
+            #render everything
+            self.on_render()
 
-            self.snake.score()
-            self.snake.draw()
-            self.food.spawn()
-            
-            
             #food logic
             if self.snake.get_pos() == self.food.get_pos():
                 self.snake.pop = False
@@ -85,16 +95,17 @@ class app(object):
                     quit()
 
             
-            
+            #update snake position
             self.snake.move()
             
             pygame.display.flip()
-            gameclock.tick(15)
+            self.gameclock.tick(15)
             
 class snake(object):
 
-    def __init__(self):
+    def __init__(self, window, myfont):
         self.window = window
+        self.myfont = myfont
         self.block = 10
         self.x = ww/2
         self.y = wh/2
@@ -137,8 +148,8 @@ class snake(object):
     
     def score(self):
         self.get_leng = len(self.parts)
-        label = myfont.render("Score: {}".format(self.get_leng), 1, (255,255,0))
-        window.blit(label, (0, 0))
+        label = self.myfont.render("Score: {}".format(self.get_leng), 1, (255,255,0))
+        self.window.blit(label, (0, 0))
 
         return
     
@@ -174,7 +185,7 @@ class snake(object):
             self.pop = True
 
 class food(object):
-    def __init__(self):
+    def __init__(self, window):
         self.food_on_table = False
         self.window = window
         self.x = 0
