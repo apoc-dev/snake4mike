@@ -3,7 +3,7 @@ import time
 import random
 
 #start lenght
-start_leng = 0
+start_leng = 10
 
 #colors
 RED = (255, 0, 0)
@@ -46,26 +46,27 @@ class app(object):
 
         
     def on_exec(self):
+
         stopped = False
-
-        #create snake object
-        
-        print("starting main loop")
-
 
         while stopped == False:
             self.window
 
             #Event handling
             for event in pygame.event.get():
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+
                 keys_pressed = pygame.key.get_pressed()
 
+                #quit() with escape key
                 if keys_pressed[pygame.K_ESCAPE]:
                     pygame.quit()
                     quit()
+
+                #configure movement
                 if keys_pressed[pygame.K_LEFT]:
                     self.snake.move_left()
                 if keys_pressed[pygame.K_RIGHT]:
@@ -79,18 +80,18 @@ class app(object):
             self.on_render()
 
             #food logic
-            if self.snake.get_pos() == self.food.get_pos():
+            if self.snake.get_head() == self.food.get_pos():
                 self.snake.pop = False
                 self.food.food_on_table = False
             
             #Collision Detection - Wall
-            if self.snake.get_pos()[0] >= 300 or self.snake.get_pos()[0] < 0 or self.snake.get_pos()[1] >= 300 or self.snake.get_pos()[1] < 0:
+            if self.snake.get_head()[0] >= 300 or self.snake.get_head()[0] < 0 or self.snake.get_head()[1] >= 300 or self.snake.get_head()[1] < 0:
                 pygame.quit()
                 quit()
 
             #Collision Detection - Snake
             for i in self.snake.parts[1:]:
-                if i == self.snake.get_pos():
+                if i == self.snake.get_head():
                     pygame.quit()
                     quit()
 
@@ -135,7 +136,7 @@ class snake(object):
             self.x += self.speed
         return
     
-    def get_pos(self):
+    def get_head(self):
         self.getx = self.x
         self.gety = self.y
         return self.getx, self.gety
@@ -183,14 +184,14 @@ class snake(object):
             self.parts.pop()
         else:
             self.pop = True
+        return
+
 
 class food(object):
     def __init__(self, window):
         self.food_on_table = False
         self.window = window
-        self.x = 0
-        self.y = 0
-        
+
     def spawn(self):
         if not self.food_on_table:
             self.x = random.randrange(0, ww, 10)
@@ -198,7 +199,7 @@ class food(object):
             self.food_on_table = True
 
         pygame.draw.rect(self.window, WHITE, [self.x, self.y, 10, 10])
-        
+        return
     def get_pos(self):
         return self.x, self.y
 
