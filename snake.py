@@ -23,7 +23,7 @@ gameclock = pygame.time.Clock()
 myfont = pygame.font.SysFont("monospace", 15)
 
 class app(object):
-
+    
     
     def __init__(self):
         self.ww = ww
@@ -35,9 +35,11 @@ class app(object):
         stopped = False
 
         #create snake object
-        mysnake = snake()
-        foods = food()
+        self.snake = snake()
+        self.food = food()
         print("starting main loop")
+
+
         while stopped == False:
             self.window
             #Event handling
@@ -51,40 +53,40 @@ class app(object):
                     pygame.quit()
                     quit()
                 if keys_pressed[pygame.K_LEFT]:
-                    mysnake.move_left()
+                    self.snake.move_left()
                 if keys_pressed[pygame.K_RIGHT]:
-                    mysnake.move_right()
+                    self.snake.move_right()
                 if keys_pressed[pygame.K_UP]:
-                    mysnake.move_up()
+                    self.snake.move_up()
                 if keys_pressed[pygame.K_DOWN]:
-                    mysnake.move_down()
+                    self.snake.move_down()
 
             self.window.fill(BLACK)
 
-            mysnake.score()
-            mysnake.draw()
-            foods.spawn()
+            self.snake.score()
+            self.snake.draw()
+            self.food.spawn()
             
             
             #food logic
-            if mysnake.get_pos() == foods.get_pos():
-                mysnake.pop = False
-                foods.food_on_table = False
+            if self.snake.get_pos() == self.food.get_pos():
+                self.snake.pop = False
+                self.food.food_on_table = False
             
             #Collision Detection - Wall
-            if mysnake.get_pos()[0] >= 300 or mysnake.get_pos()[0] < 0 or mysnake.get_pos()[1] >= 300 or mysnake.get_pos()[1] < 0:
+            if self.snake.get_pos()[0] >= 300 or self.snake.get_pos()[0] < 0 or self.snake.get_pos()[1] >= 300 or self.snake.get_pos()[1] < 0:
                 pygame.quit()
                 quit()
 
             #Collision Detection - Snake
-            for i in mysnake.parts[1:]:
-                if i == mysnake.get_pos():
+            for i in self.snake.parts[1:]:
+                if i == self.snake.get_pos():
                     pygame.quit()
                     quit()
 
             
             
-            mysnake.move()
+            self.snake.move()
             
             pygame.display.flip()
             gameclock.tick(15)
